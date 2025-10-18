@@ -21,6 +21,7 @@ export default function RootLayout({children} : {
                 <style>
                     @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Slab:wght@100..900&display=swap');
                 </style>
+                <title>Movie Library Online</title>
             </head>
             <body
                 className={`antialiased`}

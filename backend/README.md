@@ -4,6 +4,10 @@ This is the backend part of the Niuro Take Home Test. I did this for last since 
 
 ## Main decisions
 
-1. *Similarities with C#*: Since I have been coding with C# since 2014, I noticed the similarities instantly. Things like @Get() with your URL inside, Params, Query, etc. Even though Nest is not my expertise, experience can easily translate
+1. **Similarities with C#**: Since I have been coding with C# since 2014, I noticed the similarities instantly. Things like @Get() with your URL inside, Params, Query, etc. Even though Nest is not my expertise, experience can easily translate
 
-2. *Setting frontend first*: From the problem description alone I could notice the heavy lifting was clearly mostly placed at the frontend. After coding the project, I found I was right since it took more than 4 times as much time to do the frontend than the backend. Once I was finished, All I had to do was finish the axios requests in next and adapt them to my frontend
+2. **Setting frontend first**: From the problem description alone I could notice the heavy lifting was clearly mostly placed at the frontend. After coding the project, I found I was right since it took much more time to do the frontend than the backend. 
+
+3. **Prisma**: At first, I used localStorage to persist the Favorites. Then, in order to make the server more robust and actually closer how to a real life app would function, I decided to move the favorites to be Database Persisted (that's where the postgres container enters). Also, this also created changes in the frontend because now it actually consumes data from the backend, not just third party data
+
+4. **Docker**: It's much better to have a docker container for postgres than installing it locally on my machine. Also, it is great for simulating production environment

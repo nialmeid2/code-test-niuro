@@ -1,13 +1,18 @@
 "use client"
 
+
 import RouteSkeleton from "@/src/components/routeSkeleton";
-import Details from "@/src/pages/DetailsPage";
+import Details from "@/src/views/DetailsPage";
+import { Suspense } from "react";
 
 
 
 export default function DetailsRoute() {
-    
+
     return <RouteSkeleton>
-        <Details />
+        <Suspense>
+            <Details />
+        </Suspense>
     </RouteSkeleton>
+
 }

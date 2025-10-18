@@ -13,7 +13,7 @@ export default function Details() {
 
     const searchParams = useSearchParams();
 
-    const { data, isPending, error } = useQuery<DetailedMovie>({
+    const { data, isFetching, error } = useQuery<DetailedMovie>({
         queryKey: ['movieSearch', 'Details'],
         queryFn: () => fetchMovie({ id: searchParams?.get('id') }).then((res) => res.json()),
         enabled: !!searchParams?.get('id')
@@ -36,16 +36,16 @@ export default function Details() {
 
 
     return <PageSkeleton>
-        <Container className="flex max-[1080px]:flex-col gap-[1em] ml-[2ch] mt-[2em]">
+        <Container className="flex max-[1080px]:flex-col ml-[2ch] max-[1080px]:ml-[auto] gap-[1em] mt-[2em]">
 
 
             {
                 !searchParams?.get('id') ? <div className="text-[1.5em] text-center">No id was provided</div>
-                    : error ? <div className="text-[1.5em] text-center">Error: {error.message}</div>
-                        : isPending ? <div className="w-[100%] flex items-center justify-center animate-spin mt-[3em]">
+                    : error ? <div className="text-[1.5em] text-center">Error: {error.message + ``}</div>
+                        : isFetching ? <div className="w-[100%] flex items-center justify-center animate-spin mt-[3em]">
                             <i className="bi bi-arrow-repeat text-[10em]"></i>
                         </div> : !data ? <div className="text-[1.5em] text-center">Movie not found</div> : <>
-                            <section className="flex gap-[2ch] w-[100%]">
+                            <section className="flex max-[756px]:flex-col gap-[2ch] w-[100%]">
                                 <MovieCard movie={data as Movie} />
                                 <section className="flex flex-col flex-1">
                                     <div className="flex justify-between items-center mb-[1em]">

@@ -5,7 +5,6 @@ import { ReactNode, useContext, useState } from "react"
 import Header from "../header";
 import Footer from "../footer";
 import Menu from "../menu";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export default function PageSkeleton({ children }: {
     children: ReactNode

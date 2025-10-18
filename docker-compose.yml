@@ -1,0 +1,56 @@
+services: 
+    postgres_db:
+        image: postgres:18rc1
+        container_name: movie-lib-db
+        networks:
+            -   bridge-postgres-niuro
+        ports:
+            -   5431:5432
+        environment:
+            -   POSTGRES_PASSWORD=pass
+            -   POSTGRES_USER=user
+            -   POSTGRES_DB=db
+        volumes:
+            -   volume-postgres-test-niuro:/var/lib/postgresql/data
+    backend:
+        image: node:25-alpine3.21
+        container_name: backend-movie-library
+        networks:
+            -   bridge-postgres-niuro
+        ports:
+            -   3001:3001
+        environment:
+            -   API_KEY=xxxxxx
+            -   CONN_STRING=postgresql://user:pass@movie-lib-db:5432/db?schema=public
+            -   ALLOWED_ORIGIN=http://localhost:3000
+        working_dir: /app
+        volumes:
+            -   ./backend/:/app
+        command: sh -c "npm i && npx prisma generate && npm run build && node dist/main"
+        depends_on:
+            -   postgres_db
+    frontend:
+        image: node:25-alpine3.21
+        container_name: fontend-movie-library
+        networks:
+            -   bridge-postgres-niuro
+        ports:
+            -   3000:3000
+        environment:
+            -   NEXT_PUBLIC_API_HOST=http://localhost:3001/
+        working_dir: /app
+        volumes:
+            -   ./frontend/:/app
+        command: sh -c "npm i && npm run build && npx serve@latest out"
+        depends_on:
+            -   backend
+        
+        
+    
+networks:
+    bridge-postgres-niuro:
+        driver: bridge
+
+volumes:
+    volume-postgres-test-niuro:
+

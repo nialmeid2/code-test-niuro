@@ -6,9 +6,6 @@ import { Movie } from "../model/Movie";
 interface Props {
     mode: ColorModes;
     toggleMode: () => void;
-    favorites: Record<string, Movie>;
-    addFavorite: (movie: Movie) => void;
-    removeFavorite: (id: string) => void;
     menuShown: boolean;
     toggleMenu: () => void;
 }
@@ -17,8 +14,7 @@ type ColorModes = 'dark' | 'light';
 
 export const DataContext = createContext({} as Props);
 const storageKeys = {
-    Mode: 'mode',
-    Favorites: 'favorites'
+    Mode: 'mode'
 }
 
 export function DataProvider({ children }: {
@@ -35,23 +31,7 @@ export function DataProvider({ children }: {
         localStorage.setItem(storageKeys.Mode, mode == 'dark' ? 'light' : 'dark')
     }
 
-    function addFavorite(movie: Movie) {
-        const theFavorites = {...favorites};
-        theFavorites[movie.imdbID] = movie;
-        setFavorites(theFavorites);
-
-        localStorage.setItem(storageKeys.Favorites, JSON.stringify(theFavorites))
-    }
-
-    function removeFavorite(id: string) {
-        const theFavorites = {...favorites};
-        delete theFavorites[id];
-        setFavorites(theFavorites);
-
-        localStorage.setItem(storageKeys.Favorites, JSON.stringify(theFavorites));
-
-    }
-
+    
     function toggleMenu() {
         setMenuShown(ms => !ms)
     }
@@ -65,17 +45,10 @@ export function DataProvider({ children }: {
             setMode(newMode);
         }
 
-        const prevFavorites = localStorage.getItem(storageKeys.Favorites);
-
-        if (!prevFavorites)
-            return;
-
-        const prevFavoritesJson = JSON.parse(prevFavorites);
-        setFavorites(prevFavoritesJson)
-
+        
     }, []);
 
-    return <DataContext.Provider value={{ mode, toggleMode, favorites, addFavorite, removeFavorite, menuShown, toggleMenu }}>
+    return <DataContext.Provider value={{ mode, toggleMode, menuShown, toggleMenu }}>
         {children}
     </DataContext.Provider>
 

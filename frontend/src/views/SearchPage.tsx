@@ -19,7 +19,7 @@ export default function SearchPage() {
     const [scrollEnded, setScrollEnded] = useState(false);
 
 
-    const { data, isLoading, isFetching, refetch, isRefetching, error } = useQuery<{ Search: Movie[], totalResults: number }>({
+    const { data, isLoading, refetch, isRefetching, error } = useQuery<{ Search: Movie[], totalResults: number }>({
         queryKey: ['movieSearch', 'Page'],
         queryFn: () => fetchMovies({ page: currentPage, term: searchTerm }).then((res) => res.json()),
         enabled: !!searchTerm
@@ -58,7 +58,7 @@ export default function SearchPage() {
 
         const scrollEvent = () => {
             let maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
-            if (data?.Search?.length && window.scrollY >= maxScrollY && !isFetching && !isLoading) {
+            if (data?.Search?.length && window.scrollY >= maxScrollY && !isLoading) {
                 setPrevResults(m => [...m, ...data.Search]);
                 if (prevResults.length + data.Search.length < data.totalResults)
                     setCurrentPage(currPage => currPage + 1);
@@ -81,7 +81,7 @@ export default function SearchPage() {
 
 
     return <PageSkeleton>
-        <Container className="flex flex-col gap-[1em] ml-[2ch]">
+        <Container className="flex flex-col gap-[1em] ml-[2ch] max-[1080px]:ml-[auto]">
 
             <SearchBar ref={searchRef} triggerFormEvent={startSearch} />
 
@@ -90,7 +90,7 @@ export default function SearchPage() {
                     <section className="w-[100%] p-[1em] px-[0]">
 
                         {
-                            isLoading || isRefetching ? <div className="w-[100%] flex items-center justify-center animate-spin mt-[3em]">
+                            isLoading ? <div className="w-[100%] flex items-center justify-center animate-spin mt-[3em]">
                                 <i className="bi bi-arrow-repeat text-[10em]"></i>
                             </div> : <></>
                         }
@@ -109,7 +109,7 @@ export default function SearchPage() {
                         }
 
                         {
-                            error ? <div className="text-[1.5em] mt-[1em] text-center">Error: {error.message}</div> : <></>
+                            error ? <div className="text-[1.5em] mt-[1em] text-center">Error: {error.message + ''}</div> : <></>
                         }
 
                     </section>
