@@ -11,3 +11,5 @@ This is the backend part of the Niuro Take Home Test. I did this for last since 
 3. **Prisma**: At first, I used localStorage to persist the Favorites. Then, in order to make the server more robust and actually closer how to a real life app would function, I decided to move the favorites to be Database Persisted (that's where the postgres container enters). Also, this also created changes in the frontend because now it actually consumes data from the backend, not just third party data
 
 4. **Docker**: It's much better to have a docker container for postgres than installing it locally on my machine. Also, it is great for simulating production environment
+
+5. **Modularization**: I changed how files are organized for better maintainability. I'm not if this commit is going to be the one considered, but I thought this change would improve code readability since it adheres to market best practices

@@ -2,11 +2,11 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { firstValueFrom } from 'rxjs';
-import db from './db';
-import { DetailedMovie, Movie } from './Movie';
+import db from 'src/db';
+import { DetailedMovie, Movie } from './movie.entity';
 
 @Injectable()
-export class AppService {
+export class MovieService {
 
     constructor(private readonly httpService: HttpService) {}
 

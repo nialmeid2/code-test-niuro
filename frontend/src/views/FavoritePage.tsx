@@ -18,14 +18,14 @@ export default function Favorites() {
     const [filteredFavorites, setFilteredFavorites] = useState<Movie[]>([]);
     const [currPage, setCurrPage] = useState(1);
 
-    const { data, isLoading, refetch, error } = useQuery<Movie[]>({
+    const { data, isLoading, refetch, error, isRefetching } = useQuery<Movie[]>({
         queryKey: ['movieSearch', 'Favorites'],
         queryFn: () => fetchFavorites({ page: currPage }).then((res) => res.json()),
         enabled: true
     })
 
 
-    async function fetchFavorites({ page }: { page: number }) {        
+    async function fetchFavorites({ page }: { page: number }) {
         return fetch(`${process.env.NEXT_PUBLIC_API_HOST}favorites/${page}`);
     }
 
@@ -47,9 +47,9 @@ export default function Favorites() {
 
     useEffect(() => {
         const scrollEvent = () => {
-            let maxScrollY = document.documentElement.scrollHeight - window.innerHeight;            
-            if (data?.length && window.scrollY >= maxScrollY && !isLoading) {                                
-                setCurrPage(pg => pg + 1);              
+            let maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+            if (data?.length && window.scrollY >= maxScrollY && !isLoading) {
+                setCurrPage(pg => pg + 1);
             }
         }
 
@@ -76,7 +76,10 @@ export default function Favorites() {
             <MoviesGrid movieList={filteredFavorites} />
 
             {
-                data?.length && data.length >= 10 ? <div className="text-[1.5em] mt-[1em] text-center">More results</div> : <></>
+                data?.length && data.length >= 10 && !isRefetching ? <div className="text-[1.5em] mt-[1em] text-center">More results</div>
+                    : isRefetching ? <div className="w-[100%] flex items-center justify-center animate-spin mt-[1em]">
+                        <i className="bi bi-arrow-repeat text-[10em]"></i>
+                    </div> : <div className="mb-[2em]"></div>
             }
 
             {

@@ -20,7 +20,7 @@ services:
         ports:
             -   3001:3001
         environment:
-            -   API_KEY=xxxxxx
+            -   API_KEY=6d383104
             -   CONN_STRING=postgresql://user:pass@movie-lib-db:5432/db?schema=public
             -   ALLOWED_ORIGIN=http://localhost:3000
         working_dir: /app

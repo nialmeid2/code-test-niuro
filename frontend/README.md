@@ -30,3 +30,5 @@ This is the frontend part of the Niuro Take Home Test. I focused on making this 
 	3. I did use rounded borders at the cards, pure flat is a little bit too restrictive
 	
 12. **Docker**: Docker makes it easier to simulate how would the entirety of the app run in production
+
+13. **Minor Quality of life Adjustments**: The previous version had a bug where the already found movies on the search screen would flicker on infinite scrolling. I patched that by forcing refetch to be called also on the first call to the API and setting the rendered list there

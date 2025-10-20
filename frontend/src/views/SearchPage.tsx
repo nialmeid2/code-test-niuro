@@ -14,15 +14,16 @@ export default function SearchPage() {
 
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [prevResults, setPrevResults] = useState([] as Movie[]);
+    const [movieList, setMovieList] = useState([] as Movie[]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [noMovieFound, setNoMovieFound] = useState(false);
     const [scrollEnded, setScrollEnded] = useState(false);
 
 
     const { data, isLoading, refetch, isRefetching, error } = useQuery<{ Search: Movie[], totalResults: number }>({
         queryKey: ['movieSearch', 'Page'],
         queryFn: () => fetchMovies({ page: currentPage, term: searchTerm }).then((res) => res.json()),
-        enabled: !!searchTerm
+        enabled: false // to force the movieResults to be rendered only by manually calling refetch
     });
 
     async function fetchMovies({ page, term }: { page: number, term: string }) {
@@ -36,31 +37,24 @@ export default function SearchPage() {
 
         const theTerm = searchRef.current?.value
 
-        if (!theTerm)
+        if (!theTerm || theTerm == searchTerm)
             return;
 
         setSearchTerm(theTerm);
         setScrollEnded(false);
-        setPrevResults([]);
+        setNoMovieFound(false);
+        setMovieList([]);
         setCurrentPage(1); // If user searches something, start over on the first page
 
     }
 
-    useEffect(() => {
-        searchRef.current!.focus();
-        if (data?.Search)
-            data.Search = [];
-        setPrevResults([]);
-    }, [])
 
     useEffect(() => {
-
 
         const scrollEvent = () => {
             let maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
             if (data?.Search?.length && window.scrollY >= maxScrollY && !isLoading) {
-                setPrevResults(m => [...m, ...data.Search]);
-                if (prevResults.length + data.Search.length < data.totalResults)
+                if (movieList.length + data.Search.length < data.totalResults)
                     setCurrentPage(currPage => currPage + 1);
                 else
                     setScrollEnded(true);
@@ -75,8 +69,20 @@ export default function SearchPage() {
     }, [data]);
 
     useEffect(() => {
+        // Rendered this way to prevent flicker when rendering new Movies through infinite scrolling
         if (searchTerm)
-            refetch()
+            refetch().then((stmt) => {
+                if (!stmt.data?.Search) {
+                    console.log(movieList.length)
+
+                    if (movieList.length == 0)
+                        setNoMovieFound(true);
+                    return;
+                }
+                setMovieList(prev => [...prev, ...stmt.data.Search]);
+            });
+        else
+            setMovieList([]);
     }, [searchTerm, currentPage]);
 
 
@@ -86,7 +92,7 @@ export default function SearchPage() {
             <SearchBar ref={searchRef} triggerFormEvent={startSearch} />
 
             {
-                isLoading || data?.Search?.length ?
+                isLoading || movieList.length ?
                     <section className="w-[100%] p-[1em] px-[0]">
 
                         {
@@ -95,25 +101,27 @@ export default function SearchPage() {
                             </div> : <></>
                         }
 
+
+
                         {
-                            data?.Search ? <>
-                                <MoviesGrid movieList={prevResults.concat(data.Search)} />
-                                {!scrollEnded ? <div className="text-[1.5em] mt-[1em] text-center">More results</div> : <></>}
+                            movieList.length ? <>
+                                <MoviesGrid movieList={movieList} />
+                                {!scrollEnded && !isRefetching && movieList.length % 10 == 0 ? <div className="text-[1.5em] mt-[2em] text-center my-[1em]">More results</div>
+                                    : isRefetching ? <div className="w-[100%] flex items-center justify-center animate-spin mt-[1em]">
+                                        <i className="bi bi-arrow-repeat text-[10em]"></i>
+                                    </div> : <div className="mb-[2em]"></div>}
                             </> : <></>
                         }
 
-                        {
-                            isRefetching ? <div className="w-[100%] flex items-center justify-center animate-spin mt-[3em]">
-                                <i className="bi bi-arrow-repeat text-[10em]"></i>
-                            </div> : <></>
-                        }
 
                         {
                             error ? <div className="text-[1.5em] mt-[1em] text-center">Error: {error.message + ''}</div> : <></>
                         }
 
                     </section>
-                    : <></>
+                    : noMovieFound ? <div className="text-[1.5em] mt-[2em] text-center">
+                        No movies found with the keyword <span className="font-bold">{searchTerm}</span>, please try searching something else
+                    </div> : <></>
             }
 
         </Container>

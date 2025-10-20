@@ -1,4 +1,4 @@
-// Movies returned by the backend will have this structure
+// Movies returned by the API will have this structure
 export interface Movie {
     imdbID: string,
     Title: string,
